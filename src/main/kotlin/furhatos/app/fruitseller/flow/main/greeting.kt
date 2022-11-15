@@ -7,14 +7,11 @@ import furhatos.nlu.common.Yes
 
 val Greeting : State = state(Parent) {
     onEntry {
-        furhat.ask("Should I say Hello World?")
-    }
+        random(
+            {   furhat.say("Hi there") },
+            {   furhat.say("Oh, hello there") }
+        )
 
-    onResponse<Yes> {
-        furhat.say("Hello World! .")
-    }
-
-    onResponse<No> {
-        furhat.say("Ok.")
+        goto(TakingOrder)
     }
 }
