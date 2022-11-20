@@ -97,7 +97,8 @@ fun orderReceived(fruits: FruitList): State = state(Options) {
     }
 
     onResponse<No> {
-        furhat.say("Great, thanks for shopping with me. Here are your ${users.current.order.fruits}. Have a great day!")
+        print(users.current.order.fruits)
+        furhat.say("Great, thanks for shopping with me. Here is your order of ${users.current.order.fruits}. Have a great day!")
         goto(Idle)
     }
 }
