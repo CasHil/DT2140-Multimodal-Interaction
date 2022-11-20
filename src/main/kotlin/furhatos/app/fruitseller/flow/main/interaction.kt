@@ -1,10 +1,7 @@
 package furhatos.app.fruitseller.flow.main
 
 import furhatos.app.fruitseller.flow.Options
-import furhatos.app.fruitseller.nlu.BuyFruit
-import furhatos.app.fruitseller.nlu.Fruit
-import furhatos.app.fruitseller.nlu.FruitList
-import furhatos.app.fruitseller.nlu.RequestOptions
+import furhatos.app.fruitseller.nlu.*
 import furhatos.flow.kotlin.*
 import furhatos.nlu.common.No
 import furhatos.nlu.common.Yes
@@ -25,7 +22,7 @@ val TakingOrder = state(parent = Options) {
     }
 
     onResponse<No> {
-        furhat.say("Okay, that's a shame. Have a splendid day!")
+        furhat.say("Okay, no problem. Have a great day!")
         goto(Idle)
     }
 
@@ -43,8 +40,27 @@ val TakingOrder = state(parent = Options) {
             propagate()
         }
     }
+
+    onResponse<Confused> {
+            goto(explain())
+    }
 }
 
+fun explain(): State = state {
+    onEntry {
+        furhat.ask("I am Furhat, your local fruit salesman. Would you like to know what fruits I'm selling?")
+    }
+
+    onResponse<Yes> {
+        furhat.say("We have ${Fruit().getEnum(Language.ENGLISH_US).joinToString(", ")}")
+        goto(TakingOrder)
+    }
+
+    onResponse<No> {
+        furhat.say("Okay!")
+        goto(TakingOrder)
+    }
+}
 fun orderReceived(fruits: FruitList): State = state(Options) {
     onEntry {
         furhat.say("${fruits.text}, what a lovely choice!")

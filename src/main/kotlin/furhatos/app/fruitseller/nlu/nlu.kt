@@ -28,6 +28,14 @@ class RequestOptions: Intent() {
     }
 }
 
+class Confused: Intent() {
+    override fun getExamples(lang: Language): List<String> {
+        return listOf("What",
+            "What is this",
+            "Who are you")
+    }
+}
+
 class FruitList : ListEntity<QuantifiedFruit>()
 
 class QuantifiedFruit(
