@@ -5,14 +5,23 @@ import furhatos.flow.kotlin.*
 
 val Parent: State = state {
 
-    onUserLeave(instant = true) {
+    onUserLeave {
         when {
             users.count == 0 -> goto(Idle)
             it == users.current -> furhat.attend(users.other)
         }
     }
 
-    onUserEnter(instant = true) {
-        furhat.glance(it)
+    onUserEnter {
+        val originalUser = users.current
+        furhat.attend(it)
+        when {
+            users.count >= 2 -> {
+                delay(1000)
+                furhat.say("I am helping another customer first. I will get back to you as soon as possible.")
+            }
+        }
+        furhat.attend(originalUser)
+        reentry()
     }
 }

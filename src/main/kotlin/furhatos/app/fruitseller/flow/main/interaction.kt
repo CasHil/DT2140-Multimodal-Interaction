@@ -98,7 +98,59 @@ fun orderReceived(fruits: FruitList): State = state(Options) {
 
     onResponse<No> {
         print(users.current.order.fruits)
-        furhat.say("Great, thanks for shopping with me. Here is your order of ${users.current.order.fruits}. Have a great day!")
-        goto(Idle)
+        furhat.say("Great. Here is your order of ${users.current.order.fruits}.")
+        goto(confirmOrder(fruits))
     }
 }
+
+fun confirmOrder(fruits: FruitList): State = state(Options){
+    onEntry {
+        furhat.ask("Are you sure that there's nothing else you want my good sir or madam?")
+    }
+    onResponse<Yes> {
+        furhat.say("Sure thing boss! Have a great day! LOL YOLO")
+        goto(Idle)
+    }
+    onResponse<No>{
+        goto(continueOrder(fruits))
+    }
+}
+
+fun continueOrder(fruits: FruitList): State = state(Options) {
+    onEntry {
+        furhat.ask("So what else, my man?")
+    }
+
+    onReentry {
+        furhat.ask("Did you want something else?")
+    }
+
+    onResponse<BuyFruit> {
+        val fruits = it.intent.fruits
+        if (fruits != null) {
+            goto(orderReceived(fruits))
+        }
+        else {
+            propagate()
+        }
+    }
+
+    onResponse<RequestOptions> {
+        furhat.say("We have ${Fruit().getEnum(Language.ENGLISH_US).joinToString(", ")}")
+        furhat.ask("Do you want some?")
+    }
+
+    onResponse<Yes> {
+        random(
+            { furhat.ask("What kind of fruit do you want?") },
+            { furhat.ask("What type of fruit?") }
+        )
+    }
+
+    onResponse<No> {
+        print(users.current.order.fruits)
+        furhat.say("Great. Here is your order of ${users.current.order.fruits}.")
+        goto(confirmOrder(fruits))
+    }
+}
+
